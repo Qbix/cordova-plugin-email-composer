@@ -31,6 +31,16 @@ exports.aliases = {
 };
 
 /**
+* List of all email composer results.
+*/
+exports.status = {
+    CANCELLED: 0,
+    SAVED: 1,
+    SENT: 2,
+    FAILED: 3
+}
+
+/**
  * List of all available options with their default value.
  *
  * @return [ Object ]
@@ -152,12 +162,12 @@ exports.isAvailable2 = function (app, callback, scope) {
  *
  * @param [ Object ]   options  The email properties like the body,...
  * @param [ Function ] callback The callback function.
+ * @param [ Function ] errorCallback The callback function when error occure.
  * @param [ Object ]   scope    The scope of the callback.
  *
  * @return [ Void ]
  */
-exports.open = function (options, callback, scope) {
-
+exports.open = function (options, callback, errorCallback, scope) {
     if (typeof options == 'function') {
         scope    = callback;
         callback = options;
@@ -165,13 +175,14 @@ exports.open = function (options, callback, scope) {
     }
 
     var fn      = this.createCallbackFn(callback, scope);
+        errorfn = this.createCallbackFn(errorCallback, scope);
         options = this.mergeWithDefaults(options || {});
 
     if (!isAndroid && options.app != mailto && fn) {
         this.registerCallbackForScheme(fn);
     }
 
-    exec(fn, null, 'EmailComposer', 'open', [options]);
+    exec(fn, errorfn, 'EmailComposer', 'open', [options]);
 };
 
 /**
