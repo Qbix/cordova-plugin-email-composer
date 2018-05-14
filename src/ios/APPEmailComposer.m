@@ -98,8 +98,16 @@
                          error:(NSError*)error
 {
     [controller dismissViewControllerAnimated:YES completion:NULL];
+    
+    CDVPluginResult *cordovaResult = nil;
+    if(error != nil) {
+        cordovaResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+    } else {
+        cordovaResult = [CDVPluginResult
+                  resultWithStatus:CDVCommandStatus_OK messageAsInt:result];
+    }
 
-    [self execCallback];
+    [self execCallback:cordovaResult];
 }
 
 #pragma mark -
@@ -115,7 +123,8 @@
         [self.impl mailComposerFromProperties:props delegateTo:self];
 
         if (!draft) {
-            [self execCallback];
+            CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Can't create Email Composer"];
+            [self execCallback:result];
             return;
         }
 
@@ -147,13 +156,10 @@
 }
 
 /**
- * Invokes the callback without any parameter.
+ * Invokes the callback.
  */
-- (void) execCallback
+- (void) execCallback:(CDVPluginResult*) result
 {
-    CDVPluginResult *result = [CDVPluginResult
-                               resultWithStatus:CDVCommandStatus_OK];
-
     [self.commandDelegate sendPluginResult:result
                                 callbackId:self.command.callbackId];
 }

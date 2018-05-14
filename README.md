@@ -77,7 +77,7 @@ cordova.plugins.email.open({
     body:       String, // email body (for HTML, set isHtml to true)
     isHtml:    Boolean, // indicats if the body is HTML or plain text
     type:       String, // content type of the email (Android only)
-}, callback, scope);
+}, callback, errorCallback, scope);
 ```
 
 The following example shows how to create and show an email draft pre-filled with different kind of properties:
@@ -90,6 +90,16 @@ cordova.plugins.email.open({
     subject: 'Greetings',
     body:    'How are you? Nice greetings from Leipzig'
 });
+```
+
+[Only][iOS] There are all avialble status of sending:
+```javascript
+cordova.plugins.email.status = {
+    CANCELLED: 0,
+    SAVED: 1,
+    SENT: 2,
+    FAILED: 3
+}
 ```
 
 Of course its also possible to open a blank draft:
